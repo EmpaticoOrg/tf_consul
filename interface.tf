@@ -2,6 +2,14 @@ variable "environment" {
   description = "The name of our environment, i.e. development."
 }
 
+variable "datacenter" {
+  description = "The Consul data center"
+}
+
+variable "mastertoken" {
+  description = "The Consul master token"
+}
+
 variable "vpc_id" {
   description = "The VPC ID to launch in"
 }

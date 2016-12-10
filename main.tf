@@ -33,8 +33,10 @@ resource "aws_instance" "server" {
     inline = [
       "echo ${var.servers} > /tmp/consul-server-count",
       "echo ${aws_instance.server.0.private_dns} > /tmp/consul-server-addr",
-      "echo Consul${count.index} > /tmp/consul-node-name",
+      "echo ConsulServer${count.index} > /tmp/consul-node-name",
       "echo ${var.encryption_key} > /tmp/consul-encryption-key",
+      "echo ${var.datacenter} > /tmp/consul-datacenter",
+      "echo ${var.mastertoken} > /tmp/consul-mastertoken",
     ]
   }
 
@@ -63,7 +65,7 @@ resource "aws_instance" "client" {
 
   #Instance tags
   tags {
-    Name       = "${var.environment}-${var.role}-client${count.index}"
+    Name       = "${var.environment}-${var.role}-client-${count.index}"
     ConsulRole = "Client"
     Project    = "${var.app}"
     Stages     = "${var.environment}"
@@ -80,6 +82,7 @@ resource "aws_instance" "client" {
       "echo ${aws_instance.server.0.private_dns} > /tmp/consul-server-addr",
       "echo ConsulClient${count.index} > /tmp/consul-node-name",
       "echo ${var.encryption_key} > /tmp/consul-encryption-key",
+      "echo ${var.datacenter} > /tmp/consul-datacenter",
     ]
   }
 

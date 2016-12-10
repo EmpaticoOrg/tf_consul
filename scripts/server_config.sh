@@ -5,8 +5,11 @@ set -e
 SERVER_COUNT=$(cat /tmp/consul-server-count | tr -d '\n')
 CONSUL_JOIN=$(cat /tmp/consul-server-addr | tr -d '\n')
 NODE_NAME=$(cat /tmp/consul-node-name | tr -d '\n')
+DATACENTER=$(cat /tmp/consul-datacenter | tr -d '\n')
+MASTERTOKEN=$(cat /tmp/consul-mastertoken | tr -d '\n')
 ENCRYPTION_KEY=$(cat /tmp/consul-encryption-key | tr -d '\n')
 sudo rm /tmp/consul-encryption-key
+sudo rm /tmp/consul-mastertoken
 
 # Write the config file
 
@@ -14,11 +17,16 @@ cat >/tmp/config.json << EOF
 {
   "data_dir": "/var/consul",
   "node_name": "${NODE_NAME}",
+  "datacenter": "${DATACENTER}",
   "server": true,
   "bootstrap_expect": ${SERVER_COUNT},
   "enable_syslog": true,
   "start_join": ["${CONSUL_JOIN}"],
-  "encrypt": "${ENCRYPTION_KEY}"
+  "encrypt": "${ENCRYPTION_KEY}",
+  "acl_datacenter":"${DATACENTER}",
+  "acl_default_policy":"deny",
+  "acl_down_policy":"deny",
+  "acl_master_token":"${MASTERTOKEN}"
 }
 EOF
 
