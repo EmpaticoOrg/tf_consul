@@ -8,7 +8,9 @@ resource "aws_instance" "server" {
   key_name        = "${var.key_name}"
   subnet_id       = "${var.public_subnet_ids[0]}"
   count           = "${var.servers}"
-  security_groups = ["${aws_security_group.consul.name}"]
+  vpc_security_group_ids = [
+   "${aws_security_group.consul.name}"
+  ]
 
   connection {
     user        = "${lookup(var.user, var.platform)}"
@@ -56,7 +58,9 @@ resource "aws_instance" "client" {
   key_name        = "${var.key_name}"
   subnet_id       = "${var.public_subnet_ids[0]}"
   count           = "${var.clients}"
-  security_groups = ["${aws_security_group.consul.name}"]
+  vpc_security_group_ids = [
+   "${aws_security_group.consul.name}"
+  ]
 
   connection {
     user        = "${lookup(var.user, var.platform)}"
