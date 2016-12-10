@@ -3,13 +3,14 @@ data "aws_vpc" "environment" {
 }
 
 resource "aws_instance" "server" {
-  ami             = "${lookup(var.ami, "${var.region}-${var.platform}")}"
-  instance_type   = "${var.instance_type}"
-  key_name        = "${var.key_name}"
-  subnet_id       = "${var.public_subnet_ids[0]}"
-  count           = "${var.servers}"
+  ami           = "${lookup(var.ami, "${var.region}-${var.platform}")}"
+  instance_type = "${var.instance_type}"
+  key_name      = "${var.key_name}"
+  subnet_id     = "${var.public_subnet_ids[0]}"
+  count         = "${var.servers}"
+
   vpc_security_group_ids = [
-   "${aws_security_group.consul.name}"
+    "${aws_security_group.consul.id}",
   ]
 
   connection {
@@ -53,13 +54,14 @@ resource "aws_instance" "server" {
 }
 
 resource "aws_instance" "client" {
-  ami             = "${lookup(var.ami, "${var.region}-${var.platform}")}"
-  instance_type   = "${var.instance_type}"
-  key_name        = "${var.key_name}"
-  subnet_id       = "${var.public_subnet_ids[0]}"
-  count           = "${var.clients}"
+  ami           = "${lookup(var.ami, "${var.region}-${var.platform}")}"
+  instance_type = "${var.instance_type}"
+  key_name      = "${var.key_name}"
+  subnet_id     = "${var.public_subnet_ids[0]}"
+  count         = "${var.clients}"
+
   vpc_security_group_ids = [
-   "${aws_security_group.consul.name}"
+    "${aws_security_group.consul.id}",
   ]
 
   connection {
