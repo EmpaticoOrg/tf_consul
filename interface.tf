@@ -6,7 +6,7 @@ variable "vpc_id" {
   description = "The VPC ID to launch in"
 }
 
-variable "public_subnets" {
+variable "public_subnet_ids" {
   default     = []
   description = "The list of public subnets to populate."
 }
