@@ -1,12 +1,12 @@
 data "aws_vpc" "environment" {
-    id = "${var.vpc_id}"
+  id = "${var.vpc_id}"
 }
 
 resource "aws_instance" "server" {
   ami             = "${lookup(var.ami, "${var.region}-${var.platform}")}"
   instance_type   = "${var.instance_type}"
   key_name        = "${var.key_name}"
-  subnet_id     = "${var.public_subnet_ids[0]}"
+  subnet_id       = "${var.public_subnet_ids[0]}"
   count           = "${var.servers}"
   security_groups = ["${aws_security_group.consul.name}"]
 
@@ -52,7 +52,7 @@ resource "aws_instance" "client" {
   ami             = "${lookup(var.ami, "${var.region}-${var.platform}")}"
   instance_type   = "${var.instance_type}"
   key_name        = "${var.key_name}"
-  subnet_id     = "${var.public_subnet_ids[0]}"
+  subnet_id       = "${var.public_subnet_ids[0]}"
   count           = "${var.clients}"
   security_groups = ["${aws_security_group.consul.name}"]
 

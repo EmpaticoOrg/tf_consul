@@ -1,3 +1,16 @@
+variable "environment" {
+  description = "The name of our environment, i.e. development."
+}
+
+variable "vpc_id" {
+  description = "The VPC ID to launch in"
+}
+
+variable "public_subnets" {
+  default     = []
+  description = "The list of public subnets to populate."
+}
+
 variable "platform" {
   default     = "ubuntu"
   description = "The OS Platform"
