@@ -19,6 +19,10 @@ variable "public_subnet_ids" {
   description = "The list of public subnets to populate."
 }
 
+variable "bastion_host" {
+  description = "The bastion host to provision through."
+}
+
 variable "platform" {
   default     = "ubuntu"
   description = "The OS Platform"
