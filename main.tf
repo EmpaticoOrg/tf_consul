@@ -15,8 +15,9 @@ resource "aws_instance" "server" {
 
   connection {
     bastion_host = "${var.bastion_host}"
-    user        = "${lookup(var.user, var.platform)}"
-    private_key = "${file("${var.key_path}")}"
+    host         = "${self.private_ip}"
+    user         = "${lookup(var.user, var.platform)}"
+    private_key  = "${file("${var.key_path}")}"
   }
 
   #Instance tags
@@ -67,8 +68,9 @@ resource "aws_instance" "client" {
 
   connection {
     bastion_host = "${var.bastion_host}"
-    user        = "${lookup(var.user, var.platform)}"
-    private_key = "${file("${var.key_path}")}"
+    host         = "${self.private_ip}"
+    user         = "${lookup(var.user, var.platform)}"
+    private_key  = "${file("${var.key_path}")}"
   }
 
   #Instance tags
