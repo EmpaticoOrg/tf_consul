@@ -84,11 +84,28 @@ variable "instance_type" {
   description = "AWS Instance type, if you change, make sure it is compatible with AMI, not all AMIs allow all instance types."
 }
 
-variable "tagName" {
-  default     = "Consul"
-  description = "Name tag for the hosts"
+variable "app" {
+  default     = "consul"
+  description = "Name of application"
+}
+
+variable "role" {
+  default     = "consul"
+  description = "Role of servers"
 }
 
 variable "encryption_key" {
   description = "Encryption key. 16-bytes & Base64-encoded. Best generated with the consul keygen command."
+}
+
+output "consul_primary_server_address" {
+  value = "${aws_instance.server.0.public_dns}"
+}
+
+output "consul_server_addresses" {
+  value = ["${aws_instance.server.*.public_dns}"]
+}
+
+output "consul_client_addresses" {
+  value = ["${aws_instance.client.*.public_dns}"]
 }

@@ -1,7 +1,12 @@
+data "aws_vpc" "environment" {
+    id = "${var.vpc_id}"
+}
+
 resource "aws_instance" "server" {
   ami             = "${lookup(var.ami, "${var.region}-${var.platform}")}"
   instance_type   = "${var.instance_type}"
   key_name        = "${var.key_name}"
+  subnet_id     = "${var.public_subnet_ids[0]}"
   count           = "${var.servers}"
   security_groups = ["${aws_security_group.consul.name}"]
 
@@ -12,8 +17,11 @@ resource "aws_instance" "server" {
 
   #Instance tags
   tags {
-    Name       = "${var.tagName}${count.index}"
+    Name       = "${var.environment}-${var.role}-server-${count.index}"
     ConsulRole = "Server"
+    Project    = "${var.app}"
+    Stages     = "${var.environment}"
+    Roles      = "${var.role}"
   }
 
   provisioner "file" {
@@ -44,6 +52,7 @@ resource "aws_instance" "client" {
   ami             = "${lookup(var.ami, "${var.region}-${var.platform}")}"
   instance_type   = "${var.instance_type}"
   key_name        = "${var.key_name}"
+  subnet_id     = "${var.public_subnet_ids[0]}"
   count           = "${var.clients}"
   security_groups = ["${aws_security_group.consul.name}"]
 
@@ -54,8 +63,11 @@ resource "aws_instance" "client" {
 
   #Instance tags
   tags {
-    Name       = "${var.tagName}Client${count.index}"
+    Name       = "${var.environment}-${var.role}-client${count.index}"
     ConsulRole = "Client"
+    Project    = "${var.app}"
+    Stages     = "${var.environment}"
+    Roles      = "${var.role}"
   }
 
   provisioner "file" {
@@ -82,8 +94,9 @@ resource "aws_instance" "client" {
 }
 
 resource "aws_security_group" "consul" {
-  name        = "consul_${var.platform}"
+  name        = "${var.environment}-${var.app}-internal"
   description = "Consul internal traffic + maintenance."
+  vpc_id      = "${data.aws_vpc.environment.id}"
 
   // These are for internal traffic
   ingress {
@@ -120,7 +133,7 @@ resource "aws_security_group" "consul" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
   }
 
   // This is for outbound internet access
