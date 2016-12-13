@@ -52,5 +52,6 @@ See `interface.tf` for additional configurable variables.
 
 ## License
 
-Modified from Hashicorp's [original](https://github.com/hashicorp/consul/tree/master/terraform/aws) with thanks to the team there and other contributors for their excellent work. Any broken bits are entirely my fault. 
+Modified from Hashicorp's [original](https://github.com/hashicorp/consul/tree/master/terraform/aws) with thanks to the team there and other contributors for their excellent work. Any broken bits are entirely my fault.
+
 MIT
