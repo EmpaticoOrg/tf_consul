@@ -7,7 +7,7 @@ resource "aws_route53_record" "consul" {
   name    = "consul.${var.domain}"
   type    = "A"
   ttl = "300"
-  records = ["${aws_instance.server.0.public_dns}"]
+  records = ["${aws_instance.server.0.public_ip}"]
 }
 
 resource "aws_instance" "server" {
