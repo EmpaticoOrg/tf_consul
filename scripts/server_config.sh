@@ -19,6 +19,13 @@ cat >/tmp/config.json << EOF
   "node_name": "${NODE_NAME}",
   "datacenter": "${DATACENTER}",
   "server": true,
+  "addresses": {
+    "http": "0.0.0.0",
+    "dns": "0.0.0.0"
+  },
+  "ports": {
+    "dns": 53
+  },
   "bootstrap_expect": ${SERVER_COUNT},
   "enable_syslog": true,
   "start_join": ["${CONSUL_JOIN}"],

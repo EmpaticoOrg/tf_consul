@@ -2,12 +2,39 @@ data "aws_vpc" "environment" {
   id = "${var.vpc_id}"
 }
 
+resource "aws_elb" "consul" {
+  name            = "${var.environment}-consul-elb"
+  subnets         = ["${var.public_subnet_ids[0]}"]
+  security_groups = ["${aws_security_group.consul_inbound_sg.id}"]
+
+  listener {
+    instance_port     = 8500
+    instance_protocol = "http"
+    lb_port           = 8500
+    lb_protocol       = "http"
+  }
+
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "HTTP:8500/"
+    interval            = 30
+  }
+
+  instances = ["${aws_instance.web.*.id}"]
+}
+
 resource "aws_route53_record" "consul" {
   zone_id = "${var.zoneid}"
   name    = "consul.${var.domain}"
   type    = "A"
-  ttl = "300"
-  records = ["${aws_instance.server.0.public_ip}"]
+
+  alias {
+    name                   = "${aws_elb.consul.dns_name}"
+    zone_id                = "${aws_elb.consul.zone_id}"
+    evaluate_target_health = true
+  }
 }
 
 resource "aws_instance" "server" {
@@ -139,14 +166,14 @@ resource "aws_security_group" "consul" {
     from_port   = 8500
     to_port     = 8500
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
   }
 
   ingress {
-    from_port   = 8600
-    to_port     = 8600
+    from_port   = 53
+    to_port     = 53
     protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
   }
 
   // These are for maintenance
@@ -165,3 +192,35 @@ resource "aws_security_group" "consul" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "consul_inbound_sg" {
+  name        = "${var.environment}-${var.app}-${var.role}-inbound"
+  description = "Allow HTTP from Anywhere"
+  vpc_id      = "${data.aws_vpc.environment.id}"
+
+  ingress {
+    from_port   = 8500
+    to_port     = 8500
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "${var.environment}-${var.app}-${var.role}-inbound-sg"
+  }
+}
+
