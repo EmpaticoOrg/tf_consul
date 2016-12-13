@@ -2,6 +2,14 @@ data "aws_vpc" "environment" {
   id = "${var.vpc_id}"
 }
 
+resource "aws_route53_record" "consul" {
+  zone_id = "${var.zoneid}"
+  name    = "consul.${var.domain}"
+  type    = "A"
+  ttl = "300"
+  records = ["${aws_instance.server.0.public_dns}"]
+}
+
 resource "aws_instance" "server" {
   ami           = "${lookup(var.ami, "${var.region}-${var.platform}")}"
   instance_type = "${var.instance_type}"

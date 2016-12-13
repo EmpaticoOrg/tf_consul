@@ -23,6 +23,8 @@ module "consul" {
   encryption_key    = "${var.encryption_key}"
   mastertoken       = "${var.mastertoken}"
   bastion_host      = "${module.vpc.bastion_host_dns}"
+  zoneid            = "${var.zoneid}"
+  domain            = "${var.domain}"
 }
 
 output "consul_primary_server_address" {
