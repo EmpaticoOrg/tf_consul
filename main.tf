@@ -22,7 +22,7 @@ resource "aws_elb" "consul" {
     interval            = 30
   }
 
-  instances = ["${aws_instance.web.*.id}"]
+  instances = ["${aws_instance.server.*.id}"]
 }
 
 resource "aws_route53_record" "consul" {
