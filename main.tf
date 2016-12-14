@@ -75,7 +75,7 @@ resource "aws_instance" "server" {
       "echo ${aws_instance.server.0.private_dns} > /tmp/consul-server-addr",
       "echo ConsulServer${count.index} > /tmp/consul-node-name",
       "echo ${var.encryption_key} > /tmp/consul-encryption-key",
-      "echo ${var.datacenter} > /tmp/consul-datacenter",
+      "echo ${var.environment} > /tmp/consul-datacenter",
       "echo ${var.mastertoken} > /tmp/consul-mastertoken",
     ]
   }
@@ -127,7 +127,7 @@ resource "aws_instance" "client" {
       "echo ${aws_instance.server.0.private_dns} > /tmp/consul-server-addr",
       "echo ConsulClient${count.index} > /tmp/consul-node-name",
       "echo ${var.encryption_key} > /tmp/consul-encryption-key",
-      "echo ${var.datacenter} > /tmp/consul-datacenter",
+      "echo ${var.environment} > /tmp/consul-datacenter",
     ]
   }
 
