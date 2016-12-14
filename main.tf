@@ -2,6 +2,10 @@ data "aws_vpc" "environment" {
   id = "${var.vpc_id}"
 }
 
+data "aws_route53_zone" "domain" {
+  name = "${var.domain}."
+}
+
 resource "aws_elb" "consul" {
   name            = "${var.environment}-consul-elb"
   subnets         = ["${var.public_subnet_id}"]
@@ -26,8 +30,8 @@ resource "aws_elb" "consul" {
 }
 
 resource "aws_route53_record" "consul" {
-  zone_id = "${var.zoneid}"
-  name    = "consul.${var.domain}"
+  zone_id = "${data.aws_route53_zone.domain.zone_id}"
+  name    = "consul.${data.aws_route53_zone.domain.name}"
   type    = "A"
 
   alias {
@@ -223,4 +227,3 @@ resource "aws_security_group" "consul_inbound_sg" {
     Name = "${var.environment}-${var.app}-${var.role}-inbound-sg"
   }
 }
-
