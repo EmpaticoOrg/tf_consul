@@ -4,7 +4,7 @@ data "aws_vpc" "environment" {
 
 resource "aws_elb" "consul" {
   name            = "${var.environment}-consul-elb"
-  subnets         = ["${var.public_subnet_ids[0]}"]
+  subnets         = ["${var.public_subnet_id}"]
   security_groups = ["${aws_security_group.consul_inbound_sg.id}"]
 
   listener {
@@ -41,7 +41,7 @@ resource "aws_instance" "server" {
   ami           = "${lookup(var.ami, "${var.region}-${var.platform}")}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
-  subnet_id     = "${var.public_subnet_ids[0]}"
+  subnet_id     = "${var.public_subnet_id}"
   count         = "${var.servers}"
 
   vpc_security_group_ids = [
@@ -94,7 +94,7 @@ resource "aws_instance" "client" {
   ami           = "${lookup(var.ami, "${var.region}-${var.platform}")}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
-  subnet_id     = "${var.public_subnet_ids[0]}"
+  subnet_id     = "${var.public_subnet_id}"
   count         = "${var.clients}"
 
   vpc_security_group_ids = [

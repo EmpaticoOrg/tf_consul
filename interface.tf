@@ -10,9 +10,9 @@ variable "vpc_id" {
   description = "The VPC ID to launch in"
 }
 
-variable "public_subnet_ids" {
-  default     = []
-  description = "The list of public subnets to populate."
+variable "public_subnet_id" {
+  default     = ""
+  description = "The public subnet to populate."
 }
 
 variable "bastion_host" {
