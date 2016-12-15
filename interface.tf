@@ -94,6 +94,7 @@ output "consul_primary_server_address" {
 
 output "consul_server_addresses" {
   value = ["${aws_instance.server.*.public_dns}"]
+}
 
 output "consul_client_addresses" {
   value = ["${aws_instance.client.*.public_dns}"]
