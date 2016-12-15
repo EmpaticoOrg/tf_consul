@@ -80,14 +80,6 @@ variable "encryption_key" {
   description = "Encryption key. 16-bytes & Base64-encoded. Best generated with the consul keygen command."
 }
 
-output "launch_configuration" {
-  value = "${aws_launch_configuration.consul.id}"
-}
-
-output "asg_name" {
-  value = "${aws_autoscaling_group.consul.id}"
-}
-
 output "consul_primary_server_address" {
   value = "${aws_instance.server.0.public_dns}"
 }
