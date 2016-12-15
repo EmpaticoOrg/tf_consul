@@ -42,7 +42,7 @@ resource "aws_route53_record" "consul" {
 }
 
 resource "aws_instance" "server" {
-  ami           = "${lookup(var.ami, "${var.region}-${var.platform}")}"
+  ami           = "${lookup(var.ami, var.region)}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
   subnet_id     = "${var.public_subnet_id}"
@@ -55,7 +55,7 @@ resource "aws_instance" "server" {
   connection {
     bastion_host = "${var.bastion_host}"
     host         = "${self.private_ip}"
-    user         = "${lookup(var.user, var.platform)}"
+    user         = "ubuntu"
     private_key  = "${file("${var.key_path}")}"
   }
 
@@ -69,8 +69,8 @@ resource "aws_instance" "server" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/scripts/${lookup(var.service_conf, var.platform)}"
-    destination = "/tmp/${lookup(var.service_conf_dest, var.platform)}"
+    source      = "${path.module}/scripts/consul.service"
+    destination = "/tmp/consul.service"
   }
 
   provisioner "remote-exec" {
@@ -95,7 +95,7 @@ resource "aws_instance" "server" {
 }
 
 resource "aws_instance" "client" {
-  ami           = "${lookup(var.ami, "${var.region}-${var.platform}")}"
+  ami           = "${lookup(var.ami, var.region)}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
   subnet_id     = "${var.public_subnet_id}"
@@ -108,7 +108,7 @@ resource "aws_instance" "client" {
   connection {
     bastion_host = "${var.bastion_host}"
     host         = "${self.private_ip}"
-    user         = "${lookup(var.user, var.platform)}"
+    user         = "ubuntu"
     private_key  = "${file("${var.key_path}")}"
   }
 
@@ -122,8 +122,8 @@ resource "aws_instance" "client" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/scripts/${lookup(var.service_conf, var.platform)}"
-    destination = "/tmp/${lookup(var.service_conf_dest, var.platform)}"
+    source      = "${path.module}/scripts/consul.service"
+    destination = "/tmp/consul.service"
   }
 
   provisioner "remote-exec" {
