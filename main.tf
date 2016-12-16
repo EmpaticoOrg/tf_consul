@@ -55,7 +55,7 @@ data "template_file" "consul" {
 }
 
 resource "aws_launch_configuration" "consul" {
-  name                        = "${var.environment}-${var.app}-${var.role}"
+  name_prefix                 = "${var.environment}-${var.app}-${var.role}"
   image_id                    = "${lookup(var.ami, var.region)}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
