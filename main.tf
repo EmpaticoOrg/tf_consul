@@ -6,6 +6,14 @@ data "aws_route53_zone" "domain" {
   name = "${var.domain}."
 }
 
+data "aws_ami" "base_ami" {
+  filter {
+    name = "tag:Role"
+    values = ["base"]
+  }
+  most_recent = true
+}
+
 resource "aws_elb" "consul" {
   name            = "${var.environment}-consul-elb"
   subnets         = ["${var.public_subnet_id}"]
@@ -56,7 +64,7 @@ data "template_file" "consul" {
 
 resource "aws_launch_configuration" "consul" {
   name_prefix                 = "${var.environment}-${var.app}-${var.role}"
-  image_id                    = "${lookup(var.ami, var.region)}"
+  image_id                    = "${data.aws_ami.base_ami.id}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
   security_groups             = ["${aws_security_group.consul.id}"]

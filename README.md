@@ -13,40 +13,18 @@ module "consul" {
   source            = "github.com/EmpaticoOrg/tf_consul"
   environment       = "${var.environment}"
   vpc_id            = "${module.vpc.vpc_id}"
-  public_subnet_ids = "${module.vpc.public_subnet_ids}"
+  public_subnet_id  = "${module.vpc.public_subnet_id}"
   role              = "${var.role}"
   app               = "${var.app}"
   region            = "${var.region}"
   key_name          = "${var.key_name}"
-  key_path          = "${var.key_path}"
   datacenter        = "${var.environment}"
   encryption_key    = "${var.encryption_key}"
   mastertoken       = "${var.mastertoken}"
-  bastion_host      = "${module.vpc.bastion_host_dns}"
-  zoneid            = "${var.zoneid}"
   domain            = "${var.domain}"
 }
-
-output "consul_primary_server_address" {
-  value = "${module.consul.consul_primary_server_address}"
-}
-
-output "consul_server_addresses" {
-  value = ["${module.consul.consul_server_addresses}"]
-}
-
-output "consul_client_addresses" {
-  value = ["${module.consul.consul_client_addresses}"]
-}
-
-output "bastion_host_dns" {
-  value = "${module.vpc.bastion_host_dns}"
-}
-
-output "bastion_host_ip" {
-  value = "${module.vpc.bastion_host_ip}"
-}
 ```
+
 Assumes you're building your Consul cluster inside a VPC created from [this
 module](https://github.com/EmpaticoOrg/tf_vpc).
 
