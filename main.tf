@@ -47,7 +47,10 @@ data "template_file" "consul" {
   template = "${file("${path.module}/scripts/initialize.sh")}"
 
   vars {
-    region = "${var.region}"
+    region         = "${var.region}"
+    environment    = "${var.environment}"
+    encryption_key = "${var.encryption_key}"
+    mastertoken    = "${var.mastertoken}"
   }
 }
 

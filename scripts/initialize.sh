@@ -8,18 +8,38 @@ hostnamectl set-hostname $hostname
 
 aws ec2 describe-instances --region ${region} --filters 'Name=tag:Flag,Values=consul' 'Name=instance-state-name,Values=running' | jq -r '.Reservations[].Instances[].PrivateIpAddress' > /tmp/instances
 
+cat >/etc/consul.d/server.json << EOF
+{
+  "data_dir": "/var/consul",
+  "node_name": "$${hostname}",
+  "datacenter": "${environment}",
+  "server": true,
+  "addresses": {
+    "http": "0.0.0.0",
+    "dns": "0.0.0.0"
+  },
+  "ports": {
+    "dns": 53
+  },
+  "encrypt": "${encryption_key}",
+  "acl_datacenter":"${environment}",
+  "acl_default_policy":"deny",
+  "acl_down_policy":"deny",
+  "acl_master_token":"${mastertoken}"
+}
+EOF
+
 while read line;
 do
  if [ "$line" != "$internalIP" ]; then
     echo "Adding address $line"
-    cat /etc/consul.d/consul.json | jq ".retry_join += [\"$line\"]" > /tmp/$${line}-consul.json
+    cat /etc/consul.d/server.json | jq ".retry_join += [\"$line\"]" > /tmp/$${line}-consul.json
 
     if [ -s /tmp/$${line}-consul.json ]; then
-        cp /tmp/$${line}-consul.json /etc/consul.d/consul.json
+        cp /tmp/$${line}-consul.json /etc/consul.d/server.json
     fi
  fi
 done < /tmp/instances
-
 rm -f /tmp/instances
 
 # Clear any old state from the build process
