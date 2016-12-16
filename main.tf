@@ -52,11 +52,12 @@ data "template_file" "consul" {
 }
 
 resource "aws_launch_configuration" "consul" {
+  name                        = "${var.environment}-${var.app}-${var.role}"
   image_id        = "${lookup(var.ami, var.region)}"
   instance_type   = "${var.instance_type}"
   key_name        = "${var.key_name}"
   security_groups = ["${aws_security_group.consul.id}"]
-
+  associate_public_ip_address = false
   user_data = "${data.template_file.consul.rendered}"
 
   lifecycle {
@@ -65,7 +66,7 @@ resource "aws_launch_configuration" "consul" {
 }
 
 resource "aws_autoscaling_group" "consul" {
-  name                 = "${var.environment}-${var.app}-${var.role}"
+  name                 = "${var.environment}-${var.app}-${var.role}-asg"
   launch_configuration = "${aws_launch_configuration.consul.name}"
   desired_capacity     = 5
   min_size             = 3
@@ -80,6 +81,12 @@ resource "aws_autoscaling_group" "consul" {
 
   tag {
     key                 = "Name"
+    value               = "${var.environment}-${var.app}-${var.role}"
+    propagate_at_launch = "true"
+  }
+
+  tag {
+    key                 = "Flag"
     value               = "consul"
     propagate_at_launch = true
   }
