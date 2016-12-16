@@ -6,7 +6,7 @@ hostname="consul-$${instanceID#*-}"
 
 hostnamectl set-hostname $hostname
 
-aws ec2 describe-instances --region $${region} --filters 'Name=tag:Flag,Values=consul' 'Name=instance-state-name,Values=running' | jq -r '.Reservations[].Instances[].PrivateIpAddress' > /tmp/instances
+aws ec2 describe-instances --region ${region} --filters 'Name=tag:Flag,Values=consul' 'Name=instance-state-name,Values=running' | jq -r '.Reservations[].Instances[].PrivateIpAddress' > /tmp/instances
 
 while read line;
 do
