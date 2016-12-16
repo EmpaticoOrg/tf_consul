@@ -57,7 +57,7 @@ resource "aws_launch_configuration" "consul" {
   key_name        = "${var.key_name}"
   security_groups = ["${aws_security_group.consul.id}"]
 
-  user_data = "${template_file.consul.rendered}"
+  user_data = "${data.template_file.consul.rendered}"
 
   lifecycle {
     create_before_destroy = true
