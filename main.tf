@@ -43,7 +43,7 @@ resource "aws_route53_record" "consul" {
   }
 }
 
-data "template_file" "consul" {
+data "template_file" "consul_userdata" {
   template = "${file("${path.module}/scripts/initialize.sh")}"
 
   vars {
