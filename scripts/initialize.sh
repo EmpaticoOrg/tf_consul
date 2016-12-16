@@ -25,4 +25,5 @@ rm -f /tmp/instances
 # Clear any old state from the build process
 rm -rf /var/consul/*
 
+systemctl stop consul
 systemctl start consul

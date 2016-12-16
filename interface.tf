@@ -23,7 +23,7 @@ variable "ami" {
   description = "AWS AMI Id, if you change, make sure it is compatible with instance type, not all AMIs allow all instance types "
 
   default = {
-    us-east-1      = "ami-227c7535"
+    us-east-1      = "ami-6e707979"
     us-west-1      = "ami-08490c68"
     us-west-2      = "ami-d06a90b0"
     eu-west-1      = "ami-0ae77879"
