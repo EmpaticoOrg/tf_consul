@@ -43,7 +43,7 @@ resource "aws_route53_record" "consul" {
   }
 }
 
-data "template_file" "consul_userdata" {
+data "template_file" "consul" {
   template = "${file("${path.module}/scripts/initialize.sh")}"
 
   vars {
@@ -57,7 +57,7 @@ resource "aws_launch_configuration" "consul" {
   key_name        = "${var.key_name}"
   security_groups = ["${aws_security_group.consul.id}"]
 
-  user_data = "${template_file.consul_userdata.rendered}"
+  user_data = "${template_file.consul.rendered}"
 
   lifecycle {
     create_before_destroy = true
