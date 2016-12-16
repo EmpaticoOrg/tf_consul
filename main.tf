@@ -8,9 +8,10 @@ data "aws_route53_zone" "domain" {
 
 data "aws_ami" "base_ami" {
   filter {
-    name = "tag:Role"
+    name   = "tag:Role"
     values = ["base"]
   }
+
   most_recent = true
 }
 
