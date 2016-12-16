@@ -79,4 +79,3 @@ variable "domain" {
 variable "encryption_key" {
   description = "Encryption key. 16-bytes & Base64-encoded. Best generated with the consul keygen command."
 }
-
