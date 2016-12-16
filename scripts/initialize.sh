@@ -12,10 +12,10 @@ while read line;
 do
  if [ "$line" != "$internalIP" ]; then
     echo "Adding address $line"
-    cat /etc/consul.d/consul-client.json | jq ".retry_join += [\"$line\"]" > /tmp/$${line}-consul.json
+    cat /etc/consul.d/consul.json | jq ".retry_join += [\"$line\"]" > /tmp/$${line}-consul.json
 
     if [ -s /tmp/$${line}-consul.json ]; then
-        cp /tmp/$${line}-consul.json /etc/consul.d/consul-client.json
+        cp /tmp/$${line}-consul.json /etc/consul.d/consul.json
     fi
  fi
 done < /tmp/instances
