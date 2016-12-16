@@ -59,10 +59,16 @@ resource "aws_launch_configuration" "consul" {
   security_groups             = ["${aws_security_group.consul.id}"]
   associate_public_ip_address = false
   user_data                   = "${data.template_file.consul.rendered}"
+  iam_instance_profile        = "${aws_iam_instance_profile.consul.name}"
 
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_iam_instance_profile" "consul" {
+  name  = "consul"
+  roles = ["ConsulInit"]
 }
 
 resource "aws_autoscaling_group" "consul" {
