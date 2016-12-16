@@ -11,6 +11,7 @@ aws ec2 describe-instances --region ${region} --filters 'Name=tag:Flag,Values=co
 cat >/etc/consul.d/server.json << EOF
 {
   "data_dir": "/var/consul",
+  "bootstrap_expect": 3,
   "node_name": "$${hostname}",
   "datacenter": "${environment}",
   "server": true,
