@@ -2,7 +2,7 @@
 
 internalIP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 instanceID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-hostname="consul-${instanceID#*-}"
+hostname="consul-$${instanceID#*-}"
 
 hostnamectl set-hostname $hostname
 
