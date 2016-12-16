@@ -65,13 +65,14 @@ resource "aws_launch_configuration" "consul" {
 }
 
 resource "aws_autoscaling_group" "consul" {
-  name                 = "consul - ${aws_launch_configuration.consul.name}"
+  name                 = "${var.environment}-${var.app}-${var.role}"
   launch_configuration = "${aws_launch_configuration.consul.name}"
   desired_capacity     = 5
   min_size             = 3
   max_size             = 5
   min_elb_capacity     = 3
   load_balancers       = ["${aws_elb.consul.id}"]
+  vpc_zone_identifier  = ["${var.public_subnet_id}"]
 
   lifecycle {
     create_before_destroy = true
