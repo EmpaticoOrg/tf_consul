@@ -22,11 +22,13 @@ resource "aws_elb" "consul" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:8500/"
+    target              = "HTTP:8500/v1/status/leader"
     interval            = 30
   }
 
-  instances = ["${aws_instance.server.*.id}"]
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_record" "consul" {
@@ -41,107 +43,44 @@ resource "aws_route53_record" "consul" {
   }
 }
 
-resource "aws_instance" "server" {
-  ami           = "${lookup(var.ami, var.region)}"
-  instance_type = "${var.instance_type}"
-  key_name      = "${var.key_name}"
-  subnet_id     = "${var.public_subnet_id}"
-  count         = "${var.servers}"
+data "template_file" "consul" {
+  template = "${file("${path.module}/scripts/initialize.sh")}"
 
-  vpc_security_group_ids = [
-    "${aws_security_group.consul.id}",
-  ]
-
-  connection {
-    bastion_host = "${var.bastion_host}"
-    host         = "${self.private_ip}"
-    user         = "ubuntu"
-    private_key  = "${file("${var.key_path}")}"
-  }
-
-  #Instance tags
-  tags {
-    Name       = "${var.environment}-${var.role}-server-${count.index}"
-    ConsulRole = "Server"
-    Project    = "${var.app}"
-    Stages     = "${var.environment}"
-    Roles      = "${var.role}"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/scripts/consul.service"
-    destination = "/tmp/consul.service"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "echo ${var.servers} > /tmp/consul-server-count",
-      "echo ${aws_instance.server.0.private_dns} > /tmp/consul-server-addr",
-      "echo ConsulServer${count.index} > /tmp/consul-node-name",
-      "echo ${var.encryption_key} > /tmp/consul-encryption-key",
-      "echo ${var.environment} > /tmp/consul-datacenter",
-      "echo ${var.mastertoken} > /tmp/consul-mastertoken",
-    ]
-  }
-
-  provisioner "remote-exec" {
-    scripts = [
-      "${path.module}/scripts/install.sh",
-      "${path.module}/scripts/server_config.sh",
-      "${path.module}/scripts/service.sh",
-      "${path.module}/scripts/ip_tables.sh",
-    ]
+  vars {
+    region = "${var.region}"
   }
 }
 
-resource "aws_instance" "client" {
-  ami           = "${lookup(var.ami, var.region)}"
-  instance_type = "${var.instance_type}"
-  key_name      = "${var.key_name}"
-  subnet_id     = "${var.public_subnet_id}"
-  count         = "${var.clients}"
+resource "aws_launch_configuration" "consul" {
+  image_id        = "${lookup(var.ami, var.region)}"
+  instance_type   = "${var.instance_type}"
+  key_name        = "${var.key_name}"
+  security_groups = ["${aws_security_group.consul.id}"]
 
-  vpc_security_group_ids = [
-    "${aws_security_group.consul.id}",
-  ]
+  user_data = "${template_file.consul_userdata.rendered}"
 
-  connection {
-    bastion_host = "${var.bastion_host}"
-    host         = "${self.private_ip}"
-    user         = "ubuntu"
-    private_key  = "${file("${var.key_path}")}"
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_autoscaling_group" "consul" {
+  name                 = "consul - ${aws_launch_configuration.consul.name}"
+  launch_configuration = "${aws_launch_configuration.consul.name}"
+  desired_capacity     = 5
+  min_size             = 3
+  max_size             = 5
+  min_elb_capacity     = 3
+  load_balancers       = ["${aws_elb.consul.id}"]
+
+  lifecycle {
+    create_before_destroy = true
   }
 
-  #Instance tags
-  tags {
-    Name       = "${var.environment}-${var.role}-client-${count.index}"
-    ConsulRole = "Client"
-    Project    = "${var.app}"
-    Stages     = "${var.environment}"
-    Roles      = "${var.role}"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/scripts/consul.service"
-    destination = "/tmp/consul.service"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "echo ${aws_instance.server.0.private_dns} > /tmp/consul-server-addr",
-      "echo ConsulClient${count.index} > /tmp/consul-node-name",
-      "echo ${var.encryption_key} > /tmp/consul-encryption-key",
-      "echo ${var.environment} > /tmp/consul-datacenter",
-    ]
-  }
-
-  provisioner "remote-exec" {
-    scripts = [
-      "${path.module}/scripts/install.sh",
-      "${path.module}/scripts/client_config.sh",
-      "${path.module}/scripts/service.sh",
-      "${path.module}/scripts/ip_tables.sh",
-    ]
+  tag {
+    key                 = "Name"
+    value               = "consul"
+    propagate_at_launch = true
   }
 }
 
