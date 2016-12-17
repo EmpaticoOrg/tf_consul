@@ -2,6 +2,13 @@ data "aws_vpc" "environment" {
   id = "${var.vpc_id}"
 }
 
+data "aws_security_group" "prometheus" {
+  filter {
+    name = "tag:Name"
+    values = ["${var.environment}-prometheus-sg"]
+  }
+}
+
 data "aws_route53_zone" "domain" {
   name = "${var.domain}."
 }
@@ -68,7 +75,8 @@ resource "aws_launch_configuration" "consul" {
   image_id                    = "${data.aws_ami.base_ami.id}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
-  security_groups             = ["${aws_security_group.consul.id}"]
+  security_groups             = ["${aws_security_group.consul.id}",
+                                 "${data.aws_security_group.prometheus.id}"]
   associate_public_ip_address = false
   user_data                   = "${data.template_file.consul.rendered}"
   iam_instance_profile        = "${aws_iam_instance_profile.consul.name}"
