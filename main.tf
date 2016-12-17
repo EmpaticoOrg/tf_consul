@@ -71,7 +71,7 @@ data "template_file" "consul" {
 }
 
 resource "aws_launch_configuration" "consul" {
-  name_prefix                 = "${var.environment}-${var.app}-${var.role}"
+  name_prefix                 = "${var.environment}-${var.app}-${var.role}-"
   image_id                    = "${data.aws_ami.base_ami.id}"
   instance_type               = "${var.instance_type}"
   key_name                    = "${var.key_name}"
@@ -92,7 +92,7 @@ resource "aws_iam_instance_profile" "consul" {
 }
 
 resource "aws_autoscaling_group" "consul" {
-  name                 = "${var.environment}-${var.app}-${var.role}-asg"
+  name                 = "${aws_launch_configuration.consul.name}-asg"
   launch_configuration = "${aws_launch_configuration.consul.name}"
   desired_capacity     = 5
   min_size             = 3
