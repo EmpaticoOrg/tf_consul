@@ -136,7 +136,41 @@ resource "aws_security_group" "consul" {
     self      = true
   }
 
-  // These allow the DNS and HTTP API client interfaces to be queried. Here be dragons.
+  ingress {
+    from_port   = 8300
+    to_port     = 8300
+    protocol    = "tcp"
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "tcp"
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
+  }
+
+  ingress {
+    from_port   = 8301
+    to_port     = 8301
+    protocol    = "udp"
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
+  }
+
+  ingress {
+    from_port   = 8302
+    to_port     = 8302
+    protocol    = "tcp"
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
+  }
+
+  ingress {
+    from_port   = 8302
+    to_port     = 8302
+    protocol    = "udp"
+    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
+  }
+
   ingress {
     from_port   = 8500
     to_port     = 8500
