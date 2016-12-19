@@ -90,7 +90,7 @@ resource "aws_launch_configuration" "consul" {
 }
 
 resource "aws_iam_instance_profile" "consul" {
-  name  = "consul"
+  name_prefix = "consul"
   roles = ["ConsulInit"]
 }
 
