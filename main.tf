@@ -110,7 +110,7 @@ resource "aws_autoscaling_group" "consul" {
 
   tag {
     key                 = "Name"
-    value               = "${var.environment}-${var.app}-${var.role}"
+    value               = "${var.environment}-${var.app}-server"
     propagate_at_launch = "true"
   }
 
@@ -213,12 +213,12 @@ resource "aws_security_group" "consul" {
   }
 
   tags {
-    Name = "${var.environment}-${var.app}-${var.role}-internal-sg"
+    Name = "${var.environment}-${var.app}-internal-sg"
   }
 }
 
 resource "aws_security_group" "consul_inbound_sg" {
-  name        = "${var.environment}-${var.app}-${var.role}-inbound"
+  name        = "${var.environment}-${var.app}-inbound"
   description = "Allow HTTP from Anywhere"
   vpc_id      = "${data.aws_vpc.environment.id}"
 
@@ -244,6 +244,6 @@ resource "aws_security_group" "consul_inbound_sg" {
   }
 
   tags {
-    Name = "${var.environment}-${var.app}-${var.role}-inbound-sg"
+    Name = "${var.environment}-${var.app}-inbound-sg"
   }
 }
