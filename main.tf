@@ -211,6 +211,11 @@ resource "aws_security_group" "consul" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags {
+    Name = "${var.environment}-${var.app}-${var.role}-internal-sg"
+  }
+
 }
 
 resource "aws_security_group" "consul_inbound_sg" {
