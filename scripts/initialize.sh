@@ -19,9 +19,6 @@ cat >/etc/consul/server.json << EOF
     "http": "0.0.0.0",
     "dns": "0.0.0.0"
   },
-  "ports": {
-    "dns": 53
-  },
   "encrypt": "${encryption_key}",
   "acl_datacenter":"${environment}",
   "acl_default_policy":"deny",
