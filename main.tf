@@ -4,7 +4,7 @@ data "aws_vpc" "environment" {
 
 data "aws_security_group" "prometheus" {
   filter {
-    name = "tag:Name"
+    name   = "tag:Name"
     values = ["${var.environment}-prometheus-sg"]
   }
 }
@@ -71,12 +71,15 @@ data "template_file" "consul" {
 }
 
 resource "aws_launch_configuration" "consul" {
-  name_prefix                 = "${var.environment}-${var.app}-${var.role}-"
-  image_id                    = "${data.aws_ami.base_ami.id}"
-  instance_type               = "${var.instance_type}"
-  key_name                    = "${var.key_name}"
-  security_groups             = ["${aws_security_group.consul.id}",
-                                 "${data.aws_security_group.prometheus.id}"]
+  name_prefix   = "${var.environment}-${var.app}-${var.role}-"
+  image_id      = "${data.aws_ami.base_ami.id}"
+  instance_type = "${var.instance_type}"
+  key_name      = "${var.key_name}"
+
+  security_groups = ["${aws_security_group.consul.id}",
+    "${data.aws_security_group.prometheus.id}",
+  ]
+
   associate_public_ip_address = false
   user_data                   = "${data.template_file.consul.rendered}"
   iam_instance_profile        = "${aws_iam_instance_profile.consul.name}"
