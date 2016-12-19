@@ -5,7 +5,7 @@ hostname="consul-$${instanceID#*-}"
 
 hostnamectl set-hostname $hostname
 
-cat >/etc/consul.d/server.json << EOF
+cat >/etc/consul/server.json << EOF
 {
   "retry_join_ec2": {
 	  "tag_key": "Flag",
