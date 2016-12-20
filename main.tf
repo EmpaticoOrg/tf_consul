@@ -77,7 +77,7 @@ resource "aws_launch_configuration" "consul" {
   key_name      = "${var.key_name}"
 
   security_groups = ["${aws_security_group.consul.id}",
-    "${data.aws_security_group.prometheus.id}",
+    "${data.aws_security_group.riemann.id}",
   ]
 
   associate_public_ip_address = false
