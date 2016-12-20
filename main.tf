@@ -2,10 +2,10 @@ data "aws_vpc" "environment" {
   id = "${var.vpc_id}"
 }
 
-data "aws_security_group" "prometheus" {
+data "aws_security_group" "riemann" {
   filter {
     name   = "tag:Name"
-    values = ["${var.environment}-prometheus-sg"]
+    values = ["${var.environment}-riemann-sg"]
   }
 }
 
@@ -190,8 +190,8 @@ resource "aws_security_group" "consul" {
   }
 
   ingress {
-    from_port   = 53
-    to_port     = 53
+    from_port   = 8600
+    to_port     = 8600
     protocol    = "udp"
     cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
   }
@@ -204,7 +204,6 @@ resource "aws_security_group" "consul" {
     cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
   }
 
-  // This is for outbound internet access
   egress {
     from_port   = 0
     to_port     = 0
