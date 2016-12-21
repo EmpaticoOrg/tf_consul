@@ -1,10 +1,5 @@
 #!/bin/bash
 
-instanceID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-hostname="consul-$${instanceID#*-}"
-
-hostnamectl set-hostname $hostname
-
 cat >/etc/consul/server.json << EOF
 {
   "retry_join_ec2": {
@@ -12,7 +7,7 @@ cat >/etc/consul/server.json << EOF
 	  "tag_value": "consul"
 	},
   "bootstrap_expect": 3,
-  "node_name": "$${hostname}",
+  "node_name": "$${HOSTNAME}",
   "datacenter": "${environment}",
   "server": true,
   "addresses": {
