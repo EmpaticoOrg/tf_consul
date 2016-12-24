@@ -2,10 +2,10 @@ data "aws_vpc" "environment" {
   id = "${var.vpc_id}"
 }
 
-data "aws_security_group" "riemann" {
+data "aws_security_group" "core" {
   filter {
     name   = "tag:Name"
-    values = ["${var.environment}-riemann-sg"]
+    values = ["core-to-${var.environment}-sg"]
   }
 }
 
@@ -77,7 +77,7 @@ resource "aws_launch_configuration" "consul" {
   key_name      = "${var.key_name}"
 
   security_groups = ["${aws_security_group.consul.id}",
-    "${data.aws_security_group.riemann.id}",
+    "${data.aws_security_group.core.id}",
   ]
 
   associate_public_ip_address = false
@@ -95,17 +95,17 @@ resource "aws_iam_instance_profile" "consul" {
 }
 
 resource "aws_autoscaling_group" "consul" {
-  name                 = "${aws_launch_configuration.consul.name}-asg"
-  launch_configuration = "${aws_launch_configuration.consul.name}"
-  desired_capacity     = 5
-  min_size             = 3
-  max_size             = 5
-  min_elb_capacity     = 3
-  load_balancers       = ["${aws_elb.consul.id}"]
-  vpc_zone_identifier  = ["${var.public_subnet_id}"]
-  wait_for_elb_capacity = 3
+  name                      = "${aws_launch_configuration.consul.name}-asg"
+  launch_configuration      = "${aws_launch_configuration.consul.name}"
+  desired_capacity          = 5
+  min_size                  = 3
+  max_size                  = 5
+  min_elb_capacity          = 3
+  load_balancers            = ["${aws_elb.consul.id}"]
+  vpc_zone_identifier       = ["${var.public_subnet_id}"]
+  wait_for_elb_capacity     = 3
   health_check_grace_period = 300
-  health_check_type = "ELB"
+  health_check_type         = "ELB"
 
   lifecycle {
     create_before_destroy = true
