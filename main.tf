@@ -199,14 +199,6 @@ resource "aws_security_group" "consul" {
     cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
   }
 
-  // These are for maintenance
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["${data.aws_vpc.environment.cidr_block}"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
