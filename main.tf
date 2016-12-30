@@ -42,6 +42,12 @@ resource "aws_elb" "consul" {
     interval            = 30
   }
 
+  access_logs {
+    bucket = "empatico-elb-logs"
+    bucket_prefix = "${var.app}"
+    enabled = true
+  }
+
   lifecycle {
     create_before_destroy = true
   }
