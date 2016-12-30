@@ -6,7 +6,6 @@ cat >/etc/consul/server.json << EOF
 	  "tag_key": "Flag",
 	  "tag_value": "consul"
 	},
-  "bootstrap_expect": 3,
   "node_name": "$${HOSTNAME}",
   "datacenter": "${environment}",
   "server": true,
