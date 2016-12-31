@@ -185,6 +185,6 @@ resource "aws_security_group" "consul_inbound_sg" {
   }
 
   tags {
-    Name = "${var.environment}--${var.role}-${var.app}-inbound-sg"
+    Name = "${var.environment}-${var.role}-${var.app}-inbound-sg"
   }
 }
