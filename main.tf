@@ -44,7 +44,7 @@ resource "aws_elb" "consul" {
 
   access_logs {
     bucket = "empatico-elb-logs"
-    bucket_prefix = "${var.app}"
+    bucket_prefix = "${var.environment}-${var.role}"
     enabled = true
   }
 
