@@ -35,7 +35,7 @@ variable "app" {
 }
 
 variable "role" {
-  default     = "consul"
+  default     = "discovery"
   description = "Role of servers"
 }
 

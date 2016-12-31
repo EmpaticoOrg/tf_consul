@@ -23,7 +23,7 @@ data "aws_ami" "base_ami" {
 }
 
 resource "aws_elb" "consul" {
-  name            = "${var.environment}-consul-elb"
+  name            = "${var.environment}-${var.role}-${var.app}-elb"
   subnets         = ["${var.public_subnet_id}"]
   security_groups = ["${aws_security_group.consul_inbound_sg.id}"]
 
@@ -77,7 +77,7 @@ data "template_file" "consul" {
 }
 
 resource "aws_launch_configuration" "consul" {
-  name_prefix   = "${var.environment}-${var.app}-${var.role}-"
+  name_prefix   = "${var.environment}-${var.role}-${var.app}"
   image_id      = "${data.aws_ami.base_ami.id}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
@@ -116,7 +116,7 @@ resource "aws_autoscaling_group" "consul" {
 
   tag {
     key                 = "Name"
-    value               = "${var.environment}-${var.app}-server"
+    value               = "${var.environment}-${var.role}-${var.app}"
     propagate_at_launch = "true"
   }
 
@@ -134,7 +134,7 @@ resource "aws_autoscaling_group" "consul" {
 }
 
 resource "aws_security_group" "consul" {
-  name        = "${var.environment}-${var.app}-internal"
+  name        = "${var.environment}-${var.role}-${var.app}-internal"
   description = "Consul internal traffic + maintenance."
   vpc_id      = "${data.aws_vpc.environment.id}"
 
@@ -161,12 +161,12 @@ resource "aws_security_group" "consul" {
   }
 
   tags {
-    Name = "${var.environment}-${var.app}-internal-sg"
+    Name = "${var.environment}-${var.role}-${var.app}-internal-sg"
   }
 }
 
 resource "aws_security_group" "consul_inbound_sg" {
-  name        = "${var.environment}-${var.app}-inbound"
+  name        = "${var.environment}-${var.role}-${var.app}-inbound"
   description = "Allow HTTP from Anywhere"
   vpc_id      = "${data.aws_vpc.environment.id}"
 
@@ -185,6 +185,6 @@ resource "aws_security_group" "consul_inbound_sg" {
   }
 
   tags {
-    Name = "${var.environment}-${var.app}-inbound-sg"
+    Name = "${var.environment}--${var.role}-${var.app}-inbound-sg"
   }
 }
