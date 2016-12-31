@@ -23,7 +23,7 @@ data "aws_ami" "base_ami" {
 }
 
 resource "aws_elb" "consul" {
-  name            = "${var.environment}-${var.role}-${var.app}"
+  name            = "${var.environment}-${var.role}-elb"
   subnets         = ["${var.public_subnet_id}"]
   security_groups = ["${aws_security_group.consul_inbound_sg.id}"]
 
