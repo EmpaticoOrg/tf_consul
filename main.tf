@@ -23,7 +23,7 @@ data "aws_ami" "base_ami" {
 }
 
 resource "aws_elb" "consul" {
-  name            = "${var.environment}-${var.role}-${var.app}-elb"
+  name            = "${var.environment}-${var.role}-${var.app}"
   subnets         = ["${var.public_subnet_id}"]
   security_groups = ["${aws_security_group.consul_inbound_sg.id}"]
 
@@ -77,7 +77,7 @@ data "template_file" "consul" {
 }
 
 resource "aws_launch_configuration" "consul" {
-  name_prefix   = "${var.environment}-${var.role}-${var.app}"
+  name_prefix   = "${var.environment}-${var.role}-${var.app}-"
   image_id      = "${data.aws_ami.base_ami.id}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_name}"
