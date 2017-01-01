@@ -134,7 +134,7 @@ resource "aws_autoscaling_group" "consul" {
 }
 
 resource "aws_security_group" "consul" {
-  name        = "${var.environment}-${var.role}-${var.app}-internal"
+  name        = "${var.environment}-${var.role}-${var.app}"
   description = "Consul internal traffic + maintenance."
   vpc_id      = "${data.aws_vpc.environment.id}"
 
@@ -161,12 +161,12 @@ resource "aws_security_group" "consul" {
   }
 
   tags {
-    Name = "${var.environment}-${var.role}-${var.app}-internal-sg"
+    Name = "${var.environment}-${var.role}-${var.app}-sg"
   }
 }
 
 resource "aws_security_group" "consul_inbound_sg" {
-  name        = "${var.environment}-${var.role}-${var.app}-inbound"
+  name        = "${var.environment}-${var.role}-${var.app}-elb"
   description = "Allow HTTP from Anywhere"
   vpc_id      = "${data.aws_vpc.environment.id}"
 
@@ -185,6 +185,6 @@ resource "aws_security_group" "consul_inbound_sg" {
   }
 
   tags {
-    Name = "${var.environment}-${var.role}-${var.app}-inbound-sg"
+    Name = "${var.environment}-${var.role}-${var.app}-elb-sg"
   }
 }
