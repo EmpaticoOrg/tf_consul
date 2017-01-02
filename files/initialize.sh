@@ -22,7 +22,4 @@ cat >/etc/consul/server.json << EOF
 }
 EOF
 
-# Clear any old state from the build process
-rm -rf /var/consul/*
-
 systemctl restart consul
