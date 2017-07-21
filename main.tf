@@ -97,7 +97,7 @@ resource "aws_launch_configuration" "consul" {
 
 resource "aws_iam_instance_profile" "consul" {
   name_prefix = "consul"
-  role        = ["ConsulInit"]
+  role        = "ConsulInit"
 }
 
 resource "aws_autoscaling_group" "consul" {
